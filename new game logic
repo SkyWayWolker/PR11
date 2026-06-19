@@ -1,0 +1,66 @@
+import java.util.Random;
+
+public class GameLogic {
+private final String[] validMoves = {"Rock", "Paper", "Scissors"};
+private String[] usernames = new String[4];
+private String[] passwords = new String[4];
+private int userCount = 0;
+
+public String validateAndGetMove(String input) throws InvalidChoiceException {
+    if (input == null || input.trim().isEmpty()) {
+        throw new InvalidChoiceException("Хід не може бути порожнім!");
+    }
+    
+    for (String move : validMoves) {
+        if (move.equalsIgnoreCase(input.trim())) {
+            return move;
+        }
+    }
+    
+    throw new InvalidChoiceException("Некоректний хід '" + input + "'. Дозволено лише: Rock, Paper, Scissors.");
+}
+
+public void register(String username, String password) throws InvalidCredentialsException {
+    if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+        throw new InvalidCredentialsException("Логін або пароль не можуть бути порожніми.");
+    }
+
+    for (int i = 0; i < userCount; i++) {
+        if (usernames[i].equalsIgnoreCase(username.trim())) {
+            throw new InvalidCredentialsException("Користувач з іменем " + username + " вже існує.");
+        }
+    }
+
+    if (userCount >= usernames.length) {
+        String[] newUsers = new String[usernames.length * 2];
+        String[] newPasses = new String[passwords.length * 2];
+        System.arraycopy(usernames, 0, newUsers, 0, usernames.length);
+        System.arraycopy(passwords, 0, newPasses, 0, passwords.length);
+        usernames = newUsers;
+        passwords = newPasses;
+    }
+
+    usernames[userCount] = username.trim();
+    passwords[userCount] = password;
+    userCount++;
+}
+
+public String generateComputerMove() {
+    Random random = new Random();
+    return validMoves[random.nextInt(validMoves.length)];
+}
+
+public String determineWinner(String playerMove, String computerMove) {
+    if (playerMove.equals(computerMove)) {
+        return "Tie";
+    }
+    
+    if ((playerMove.equals("Rock") && computerMove.equals("Scissors")) ||
+        (playerMove.equals("Paper") && computerMove.equals("Rock")) ||
+        (playerMove.equals("Scissors") && computerMove.equals("Paper"))) {
+        return "Player";
+    }
+    
+    return "Computer";
+}
+}
