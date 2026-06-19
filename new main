@@ -1,0 +1,60 @@
+import java.util.Scanner;
+
+public class Main {
+public static void main(String[] args) {
+GameLogic game = new GameLogic();
+Scanner scanner = new Scanner(System.in);
+
+    System.out.println("--- Вітаємо у грі Rock-Paper-Scissors! ---");
+
+    while (true) {
+        try {
+            System.out.println("\nРеєстрація нового гравця:");
+            System.out.print("Введіть нікнейм: ");
+            String user = scanner.nextLine();
+            System.out.print("Введіть пароль: ");
+            String pass = scanner.nextLine();
+
+            game.register(user, pass);
+            System.out.println("Реєстрація успішна!");
+            break;
+            
+        } catch (InvalidCredentialsException e) {
+            System.out.println("[Помилка реєстрації]: " + e.getMessage());
+            System.out.println("Спробуйте ще раз.");
+        }
+    }
+
+    while (true) {
+        System.out.println("\nВаш хід (Rock, Paper, Scissors) або 'exit' для виходу:");
+        String input = scanner.nextLine();
+
+        if (input.equalsIgnoreCase("exit")) {
+            System.out.println("Дякуємо за гру!");
+            break;
+        }
+
+        try {
+            String playerMove = game.validateAndGetMove(input);
+            String computerMove = game.generateComputerMove();
+
+            System.out.println("Ви обрали: " + playerMove);
+            System.out.println("Комп'ютер обрав: " + computerMove);
+
+            String result = game.determineWinner(playerMove, computerMove);
+            if (result.equals("Tie")) {
+                System.out.println("Нічия!");
+            } else if (result.equals("Player")) {
+                System.out.println("Ви перемогли!");
+            } else {
+                System.out.println("Комп'ютер переміг!");
+            }
+
+        } catch (InvalidChoiceException e) {
+            System.out.println("[Помилка гри]: " + e.getMessage());
+        }
+    }
+    
+    scanner.close();
+}
+}
